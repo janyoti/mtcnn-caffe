@@ -1,7 +1,7 @@
 import sys
 sys.path.append('../demo/')
 sys.path.append('.')
-sys.path.append('/home/cmcc/caffe-master/python')
+sys.path.append('/home/jan/dev/lib/caffe/build/install/python')
 import tools
 import caffe
 import cv2
