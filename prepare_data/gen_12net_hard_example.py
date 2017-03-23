@@ -30,14 +30,15 @@ def detectFace(img_path,threshold):
         scale_img = np.swapaxes(scale_img, 0, 2)
         net_12.blobs['data'].reshape(1,3,ws,hs)
         net_12.blobs['data'].data[...]=scale_img
-	caffe.set_device(0)
-	caffe.set_mode_gpu()
-	out_ = net_12.forward()
+        # caffe.set_device(0)
+        # caffe.set_mode_gpu()
+        caffe.set_mode_cpu()
+        out_ = net_12.forward()
         out.append(out_)
     image_num = len(scales)
     rectangles = []
     for i in range(image_num):    
-        cls_prob = out[i]['cls_score'][0][1]
+        cls_prob = out[i]['prob1'][0][1]
         roi      = out[i]['conv4-2'][0]
         out_h,out_w = cls_prob.shape
         out_side = max(out_h,out_w)
@@ -57,7 +58,7 @@ threshold = [0.6,0.6,0.7]
 with open(anno_file, 'r') as f:
     annotations = f.readlines()
 num = len(annotations)
-print "%d pics in total" % num
+print("%d pics in total" % num)
 
 p_idx = 0 # positive
 n_idx = 0 # negative
@@ -82,7 +83,7 @@ for annotation in annotations:
             continue
 
         # compute intersection over union(IoU) between current box and all gt boxes
-        Iou = IoU(box, gts)
+        Iou = tools.IoU(box, gts[0])
         cropped_im = img[y_top:y_bottom + 1, x_left:x_right + 1]
         resized_im = cv2.resize(cropped_im, (image_size, image_size), interpolation=cv2.INTER_LINEAR)
 
